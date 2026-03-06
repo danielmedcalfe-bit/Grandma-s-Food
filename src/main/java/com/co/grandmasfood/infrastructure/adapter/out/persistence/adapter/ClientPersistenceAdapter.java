@@ -59,4 +59,9 @@ public class ClientPersistenceAdapter implements ClientPersistencePort {
     }
 
 
+    @Override
+    public Mono<Void> deleteByDocument(String document) {
+        findByDocument(document);
+        return r2dbcRepository.deleteByDocument(document);
+    }
 }

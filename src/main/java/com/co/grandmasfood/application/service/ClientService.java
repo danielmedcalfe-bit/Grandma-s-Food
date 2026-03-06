@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ClientService implements CreateClientUseCase, GetClientUseCase, UpdateClientUseCase {
+public class ClientService implements CreateClientUseCase, GetClientUseCase, UpdateClientUseCase,DeleteClientUseCase {
 
     private final ClientPersistencePort persistencePort;
 
@@ -106,6 +106,17 @@ public class ClientService implements CreateClientUseCase, GetClientUseCase, Upd
                 );
 
     }
+    @Override
+    public Mono<Void> deleteClient(String document) {
+        log.info("Deleting client by document: {}", document);
+        return persistencePort.findByDocument(document)
+                .switchIfEmpty(Mono.error(new ClientNotFoundException(document)))
+                .flatMap(Client -> persistencePort.deleteByDocument(document))
+                .doOnSuccess(v -> log.info("Client deleted Successfully: {}", document));
+
+    }
+
+
 
 
     private Client applyUpdates(Client existing, UpdateClientCommand command) {
@@ -146,4 +157,7 @@ public class ClientService implements CreateClientUseCase, GetClientUseCase, Upd
                 .updatedAt(now)
                 .build();
     }
+
+
+
 }
