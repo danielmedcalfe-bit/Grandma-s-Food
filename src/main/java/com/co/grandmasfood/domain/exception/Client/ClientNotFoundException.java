@@ -1,4 +1,4 @@
-package com.co.grandmasfood.domain.exception;
+package com.co.grandmasfood.domain.exception.Client;
 
 public class ClientNotFoundException extends DomainException {
     // Esta clase representa el error "Cliente no encontrado"

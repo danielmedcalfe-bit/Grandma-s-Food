@@ -2,19 +2,16 @@ package com.co.grandmasfood.application.service;
 
 import com.co.grandmasfood.application.port.in.client.*;
 import com.co.grandmasfood.application.port.out.ClientPersistencePort;
-import com.co.grandmasfood.domain.exception.ClientAlreadyExistsException;
-import com.co.grandmasfood.domain.exception.ClientNotFoundException;
-import com.co.grandmasfood.domain.exception.NoChangesDetectedException;
-import com.co.grandmasfood.domain.exception.NoClientsExistsException;
+import com.co.grandmasfood.domain.exception.Client.ClientAlreadyExistsException;
+import com.co.grandmasfood.domain.exception.Client.ClientNotFoundException;
+import com.co.grandmasfood.domain.exception.Client.NoChangesDetectedException;
 import com.co.grandmasfood.domain.model.Client;
-import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.ClientResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
