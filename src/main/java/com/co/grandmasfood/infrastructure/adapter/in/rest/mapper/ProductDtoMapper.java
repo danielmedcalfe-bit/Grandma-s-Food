@@ -15,6 +15,7 @@ public class ProductDtoMapper {
                   .description(dto.getDescription())
                   .price(dto.getPrice())
                   .stock(dto.getStock())
+                  .category(dto.getCategory())
                   .build();
     }
     public ProductResponseDto toResponseDto(Product product){
@@ -23,6 +24,8 @@ public class ProductDtoMapper {
                 .name(product.getName())
                 .category(product.getCategory())
                 .Stock(product.getStock())
+                .category(product.getCategory())
+                .price(product.getPrice())
                 .build();
     }
 }
