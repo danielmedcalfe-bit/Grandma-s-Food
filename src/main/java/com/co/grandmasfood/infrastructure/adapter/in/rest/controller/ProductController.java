@@ -1,6 +1,7 @@
 package com.co.grandmasfood.infrastructure.adapter.in.rest.controller;
 
 import com.co.grandmasfood.application.port.in.product.CreateProductUseCase;
+import com.co.grandmasfood.application.port.in.product.GetProductUseCase;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.ProductRequestDto;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.ProductResponseDto;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.mapper.ProductDtoMapper;
@@ -19,6 +20,7 @@ import reactor.core.publisher.Mono;
 public class ProductController {
 
     private final CreateProductUseCase createProductUseCase;
+    private final GetProductUseCase getProductUseCase;
     private final ProductDtoMapper dtoMapper;
 
     @PostMapping(
@@ -41,6 +43,21 @@ public class ProductController {
 
 
 
+
+
+    }
+
+    @GetMapping(
+            value = "/{code}" ,
+            produces=MediaType.APPLICATION_JSON_VALUE
+    )
+    public Mono<ProductResponseDto> getProduct(@PathVariable String code){
+        log.info("GET/get products/{}",code);
+        return getProductUseCase.getProductByCode(code)
+                .map(dtoMapper::toResponseDto)
+                .doOnSuccess(response -> {
+                    log.info("Retrieving Product with code: {}", response.getCode());
+                });
 
 
     }
