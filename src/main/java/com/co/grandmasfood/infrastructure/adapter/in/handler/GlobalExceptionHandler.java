@@ -1,6 +1,6 @@
 package com.co.grandmasfood.infrastructure.adapter.in.handler;
 
-import com.co.grandmasfood.domain.exception.*;
+import com.co.grandmasfood.domain.exception.Client.*;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

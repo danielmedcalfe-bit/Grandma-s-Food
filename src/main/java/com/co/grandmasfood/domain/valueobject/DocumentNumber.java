@@ -1,6 +1,6 @@
 package com.co.grandmasfood.domain.valueobject;
 
-import com.co.grandmasfood.domain.exception.InvalidDocumentException;
+import com.co.grandmasfood.domain.exception.Client.InvalidDocumentException;
 import lombok.Value;
 
 @Value

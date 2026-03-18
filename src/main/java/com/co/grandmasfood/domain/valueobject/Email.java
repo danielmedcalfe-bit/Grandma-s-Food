@@ -1,6 +1,6 @@
 package com.co.grandmasfood.domain.valueobject;
 
-import com.co.grandmasfood.domain.exception.InvalidEmailException;
+import com.co.grandmasfood.domain.exception.Client.InvalidEmailException;
 import lombok.Value;
 
 @Value
