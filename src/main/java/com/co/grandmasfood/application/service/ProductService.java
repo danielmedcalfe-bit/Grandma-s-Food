@@ -2,9 +2,11 @@ package com.co.grandmasfood.application.service;
 
 import com.co.grandmasfood.application.port.in.product.CreateProductCommand;
 import com.co.grandmasfood.application.port.in.product.CreateProductUseCase;
+import com.co.grandmasfood.application.port.in.product.GetProductUseCase;
 import com.co.grandmasfood.application.port.out.ProductPersistencePort;
 import com.co.grandmasfood.application.port.out.ProductPersistencePort;
 import com.co.grandmasfood.domain.exception.Product.ProductAlreadyExistsException;
+import com.co.grandmasfood.domain.exception.Product.ProductNotFoundException;
 import com.co.grandmasfood.domain.model.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,7 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ProductService implements CreateProductUseCase {
+public class ProductService implements CreateProductUseCase, GetProductUseCase {
 
     private final ProductPersistencePort productPersistencePort;
 
@@ -34,6 +36,20 @@ public class ProductService implements CreateProductUseCase {
                                  log.info("Product created correctly with code: {}", savedProduct.getCode()));
 
                 });
+    }
+    @Override
+    public Mono<Product>  getProductByCode(String code){
+         log.info("Retrieving Product by Code: {}", code);
+
+                 return productPersistencePort.findByCode(code)
+                         .switchIfEmpty(Mono.error(new ProductNotFoundException(code)))
+                         .doOnSuccess(product-> {
+                             log.info("Product Founded with code: {}",product.getCode());
+                         });
+
+
+
+
     }
 
     private Product buildProduct(CreateProductCommand command){
