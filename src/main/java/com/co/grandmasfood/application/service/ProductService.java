@@ -1,10 +1,10 @@
 package com.co.grandmasfood.application.service;
 
-import com.co.grandmasfood.application.port.in.product.CreateProductCommand;
-import com.co.grandmasfood.application.port.in.product.CreateProductUseCase;
-import com.co.grandmasfood.application.port.in.product.GetProductUseCase;
+import com.co.grandmasfood.application.port.in.product.*;
 import com.co.grandmasfood.application.port.out.ProductPersistencePort;
 import com.co.grandmasfood.application.port.out.ProductPersistencePort;
+import com.co.grandmasfood.domain.exception.Client.NoChangesDetectedException;
+import com.co.grandmasfood.domain.exception.Product.NotFoundUpdateException;
 import com.co.grandmasfood.domain.exception.Product.ProductAlreadyExistsException;
 import com.co.grandmasfood.domain.exception.Product.ProductNotFoundException;
 import com.co.grandmasfood.domain.model.Product;
@@ -13,10 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ProductService implements CreateProductUseCase, GetProductUseCase {
+public class ProductService implements CreateProductUseCase, GetProductUseCase, UpdateProductUseCase {
 
     private final ProductPersistencePort productPersistencePort;
 
@@ -51,6 +53,28 @@ public class ProductService implements CreateProductUseCase, GetProductUseCase {
 
 
     }
+    @Override
+    public Mono<Void> updateByCode(String code, UpdateProductCommand command){
+        log.info("Updating Product by code: {}", code);
+        if(!command.hasChanged()){
+            log.warn("No Changes detected by code: {}", code);
+            return Mono.error(new NotFoundUpdateException("No changes detected by the request"));
+        }
+        return productPersistencePort.findByCode(code)
+                .switchIfEmpty(Mono.error(new ProductNotFoundException(code)))
+                .flatMap(existingProduct -> {
+                    Product updatedProduct=applyUpdate(existingProduct, command);
+                    if (!hasActualChanges(updatedProduct, existingProduct)) {
+                        log.warn("i've not detected changes ");
+                                return Mono.error(new NoChangesDetectedException("No changes detectec in the request"));
+                    }
+                    updatedProduct.setUpdatedAt(LocalDateTime.now());
+                    return productPersistencePort.save(updatedProduct);
+                })
+                .then()
+                .doOnSuccess(v ->
+                        log.info("Product updated correctly with code: {}", code));
+    }
 
     private Product buildProduct(CreateProductCommand command){
 
@@ -64,7 +88,31 @@ public class ProductService implements CreateProductUseCase, GetProductUseCase {
                 .build();
 
 
+
     }
 
+    private Product applyUpdate(Product existing, UpdateProductCommand command){
+        return Product.builder()
+                .code(existing.getCode())
+                .name(command.getName() != null ? command.getName(): existing.getName())
+                .description(command.getDescription() != null ? command.getDescription():existing.getDescription())
+                .price(command.getPrice() != null ? command.getPrice():existing.getPrice())
+                .stock(command.getStock() !=null ? command.getStock():existing.getStock())
+                .category(command.getCategory() !=null ? command.getCategory():existing.getCategory())
+                .createdAt(existing.getCreatedAt())
+                .updatedAt(existing.getUpdatedAt())
+                .build();
+
+    }
+    private boolean hasActualChanges(Product existing, Product updated){
+        return !existing.getName().equals(updated.getName()) ||
+                !existing.getDescription().equals(updated.getDescription()) ||
+                 !existing.getPrice().equals(updated.getPrice())||
+                !existing.getCategory().equals(updated.getCategory())||
+                !existing.getStock().equals(updated.getStock());
+
+
+
+    }
 
 }

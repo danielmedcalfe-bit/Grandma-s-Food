@@ -1,9 +1,11 @@
 package com.co.grandmasfood.infrastructure.adapter.in.rest.mapper;
 
 import com.co.grandmasfood.application.port.in.product.CreateProductCommand;
+import com.co.grandmasfood.application.port.in.product.UpdateProductCommand;
 import com.co.grandmasfood.domain.model.Product;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.ProductRequestDto;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.ProductResponseDto;
+import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.UpdateProductResquestDto;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,5 +29,15 @@ public class ProductDtoMapper {
                 .category(product.getCategory())
                 .price(product.getPrice())
                 .build();
+    }
+    public UpdateProductCommand updateCommand(UpdateProductResquestDto productRequestDto){
+        return UpdateProductCommand.builder()
+                .name(productRequestDto.getName())
+                .description(productRequestDto.getDescription())
+                .price(productRequestDto.getPrice())
+                .stock(productRequestDto.getStock())
+                .category(productRequestDto.getCategory())
+                .build();
+
     }
 }
