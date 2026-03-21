@@ -2,6 +2,7 @@ package com.co.grandmasfood.application.port.in.product;
 
 import lombok.Builder;
 import lombok.Value;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.math.BigDecimal;
 
@@ -15,6 +16,6 @@ public class UpdateProductCommand {
   String category;
 
   public boolean hasChanged(){
-      return name != null || description != null || price != null || stock != null || category != null ;
+      return ObjectUtils.anyNull(name, description, price, stock, category);
   }
 }
