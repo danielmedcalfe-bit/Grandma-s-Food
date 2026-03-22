@@ -1,6 +1,7 @@
 package com.co.grandmasfood.infrastructure.adapter.in.rest.controller;
 
 import com.co.grandmasfood.application.port.in.product.CreateProductUseCase;
+import com.co.grandmasfood.application.port.in.product.DeleteProductUseCase;
 import com.co.grandmasfood.application.port.in.product.GetProductUseCase;
 import com.co.grandmasfood.application.port.in.product.UpdateProductUseCase;
 import com.co.grandmasfood.domain.model.Product;
@@ -25,6 +26,7 @@ public class ProductController {
     private final CreateProductUseCase createProductUseCase;
     private final GetProductUseCase getProductUseCase;
     private final UpdateProductUseCase updateProductUseCase;
+    private final DeleteProductUseCase deleteProductUseCase;
     private final ProductDtoMapper dtoMapper;
 
     @PostMapping(
@@ -79,10 +81,14 @@ public class ProductController {
                         updateProductUseCase.updateByCode(code, command))
                 .doOnSuccess(v ->
                         log.info("updating successfully: {}", code));
-
-
-
-
-
+    }
+    @DeleteMapping("/{code}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> deleteProduct(@PathVariable String code){
+        log.info("Start to delete Product by code: {}", code);
+        return deleteProductUseCase.deleteProduct(code)
+                .doOnSuccess(ClientDeleted ->
+                        log.info("Product deleted Correctly")
+                );
     }
 }

@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ProductService implements CreateProductUseCase, GetProductUseCase, UpdateProductUseCase {
+public class ProductService implements CreateProductUseCase, GetProductUseCase, UpdateProductUseCase, DeleteProductUseCase {
 
     private final ProductPersistencePort productPersistencePort;
 
@@ -74,6 +74,14 @@ public class ProductService implements CreateProductUseCase, GetProductUseCase, 
                 .then()
                 .doOnSuccess(v ->
                         log.info("Product updated correctly with code: {}", code));
+    }
+    @Override
+    public Mono<Void> deleteProduct(String code){
+        log.info("Deleting Products with code: {}", code);
+        return productPersistencePort.findByCode(code)
+                .switchIfEmpty(Mono.error(new ProductNotFoundException(code)))
+                .flatMap( Product -> productPersistencePort.deleteByCode(code))
+                .doOnSuccess(Void -> log.info("Product deleted correctly by code: {}",code));
     }
 
     private Product buildProduct(CreateProductCommand command){

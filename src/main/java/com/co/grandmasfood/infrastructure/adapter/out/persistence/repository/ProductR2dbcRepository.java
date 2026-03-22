@@ -9,5 +9,6 @@ import reactor.core.publisher.Mono;
 public interface ProductR2dbcRepository extends R2dbcRepository<ProductEntity, Long> {
     Mono<ProductEntity>  findByCode(String code);
     Mono<Boolean> existsByCode(String code);
+    Mono<Void> deleteByCode(String code);
 
 }
