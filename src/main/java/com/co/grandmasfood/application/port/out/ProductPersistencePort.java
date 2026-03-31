@@ -7,4 +7,5 @@ public interface ProductPersistencePort {
     Mono<Product> save(Product product);
     Mono<Boolean> existsByCode(String code);
     Mono<Product> findByCode(String code);
+    Mono<Void>  deleteByCode(String code);
 }

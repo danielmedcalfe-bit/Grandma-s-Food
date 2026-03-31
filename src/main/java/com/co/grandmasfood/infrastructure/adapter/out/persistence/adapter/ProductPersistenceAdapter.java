@@ -64,4 +64,9 @@ public class ProductPersistenceAdapter implements ProductPersistencePort {
                .map(productEntityMapper::toDomain);
     }
 
+    @Override
+    public Mono<Void> deleteByCode(String code){
+        return productR2dbcRepository.deleteByCode(code);
+    }
+
 }
