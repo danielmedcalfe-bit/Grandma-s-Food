@@ -56,7 +56,7 @@ public class ProductService implements CreateProductUseCase, GetProductUseCase, 
     @Override
     public Mono<Void> updateByCode(String code, UpdateProductCommand command){
         log.info("Updating Product by code: {}", code);
-        if(!command.hasChanged()){
+        if(command.hasChanged()){
             log.warn("No Changes detected by code: {}", code);
             return Mono.error(new NotFoundUpdateException("No changes detected by the request"));
         }
