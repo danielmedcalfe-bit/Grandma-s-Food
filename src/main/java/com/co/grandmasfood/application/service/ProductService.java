@@ -31,7 +31,7 @@ public class ProductService implements CreateProductUseCase, GetProductUseCase, 
                         log.warn("Produc with code {} already exists",command.getCode());
                         return Mono.error( new ProductAlreadyExistsException(command.getCode()));
                     }
-                Product product=buildProduct(command);
+                Product product=buildProduct(command);s
 
                  return productPersistencePort.save(product)
                          .doOnSuccess(savedProduct ->
