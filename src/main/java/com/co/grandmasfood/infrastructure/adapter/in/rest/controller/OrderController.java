@@ -2,6 +2,8 @@ package com.co.grandmasfood.infrastructure.adapter.in.rest.controller;
 
 import com.co.grandmasfood.application.port.in.order.CreateOrderUseCase;
 import com.co.grandmasfood.application.port.in.order.DeleteOrderUseCase;
+import com.co.grandmasfood.application.port.in.order.GetOrderUseCase;
+import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.ClientResponseDto;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.OrderRequestDto;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.OrderResponseDto;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.mapper.OrderDtoMapper;
@@ -19,6 +21,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class OrderController {
 
+    private final GetOrderUseCase getOrderUseCase;
     private final DeleteOrderUseCase deleteOrderUseCase;
     private final CreateOrderUseCase createOrderUseCase;
     private final OrderDtoMapper orderDtoMapper;
@@ -48,5 +51,20 @@ public class OrderController {
                 .doOnSuccess(  V->
                         log.info("order deleted sucessfully: {}",uuid));
 
+    }
+
+    @GetMapping(
+            value = "/{uuid}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public Mono<OrderResponseDto> getOrder(@PathVariable String uuid) {
+
+        log.info("GET /orders/{} - Retrieving order", uuid);
+
+        return getOrderUseCase.getOrderByUuid(uuid)
+                .map(orderDtoMapper::toResponseDto)
+                .doOnSuccess(response ->
+                        log.info("Client retrieved successfully: {}", response.getUuid())
+                );
     }
 }

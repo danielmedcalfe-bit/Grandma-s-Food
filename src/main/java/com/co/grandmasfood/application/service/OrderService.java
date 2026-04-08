@@ -2,6 +2,7 @@ package com.co.grandmasfood.application.service;
 
 import com.co.grandmasfood.application.port.in.order.CreateOrderUseCase;
 import com.co.grandmasfood.application.port.in.order.DeleteOrderUseCase;
+import com.co.grandmasfood.application.port.in.order.GetOrderUseCase;
 import com.co.grandmasfood.application.port.in.order.OrderCreateCommand;
 import com.co.grandmasfood.application.port.out.ClientPersistencePort;
 import com.co.grandmasfood.application.port.out.OrderPersistencePort;
@@ -10,6 +11,7 @@ import com.co.grandmasfood.domain.exception.Client.ClientNotFoundException;
 import com.co.grandmasfood.domain.exception.Order.InsufficientStockException;
 import com.co.grandmasfood.domain.exception.Order.OrderNotFoundException;
 import com.co.grandmasfood.domain.exception.Product.ProductNotFoundException;
+import com.co.grandmasfood.domain.model.Client;
 import com.co.grandmasfood.domain.model.Order;
 import com.co.grandmasfood.domain.model.Product;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +27,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class OrderService implements CreateOrderUseCase, DeleteOrderUseCase {
+public class OrderService implements CreateOrderUseCase, DeleteOrderUseCase, GetOrderUseCase {
 
     public final OrderPersistencePort orderPersistencePort;
     public final ClientPersistencePort clientPersistencePort;
@@ -78,6 +80,18 @@ public class OrderService implements CreateOrderUseCase, DeleteOrderUseCase {
                 .flatMap(Client -> orderPersistencePort.deleteByUuid(uuid))
                 .doOnSuccess(v -> log.info("Client deleted Successfully: {}", uuid));
 
+    }
+
+    @Override
+    public Mono<Order> getOrderByUuid(String uuid) {
+
+        log.info("Retrieving client with document: {}", uuid);
+
+        return orderPersistencePort.findByUuid(uuid)
+                .switchIfEmpty(Mono.error(new ClientNotFoundException(uuid)))
+                .doOnSuccess(Order ->
+                        log.info("Client found: {}", Order.getUuid())
+                );
     }
 
 
