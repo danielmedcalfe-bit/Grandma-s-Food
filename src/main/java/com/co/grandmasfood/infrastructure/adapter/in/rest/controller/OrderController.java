@@ -1,11 +1,7 @@
 package com.co.grandmasfood.infrastructure.adapter.in.rest.controller;
 
-import com.co.grandmasfood.application.port.in.order.CreateOrderUseCase;
-import com.co.grandmasfood.application.port.in.order.DeleteOrderUseCase;
-import com.co.grandmasfood.application.port.in.order.GetOrderUseCase;
-import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.ClientResponseDto;
-import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.OrderRequestDto;
-import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.OrderResponseDto;
+import com.co.grandmasfood.application.port.in.order.*;
+import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.*;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.mapper.OrderDtoMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +17,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class OrderController {
 
+    private final UpdateOrderUseCase updateOrderUseCase;
     private final GetOrderUseCase getOrderUseCase;
     private final DeleteOrderUseCase deleteOrderUseCase;
     private final CreateOrderUseCase createOrderUseCase;
@@ -66,5 +63,21 @@ public class OrderController {
                 .doOnSuccess(response ->
                         log.info("Client retrieved successfully: {}", response.getUuid())
                 );
+    }
+
+    @PutMapping(
+            value = "/{uuid}",
+            consumes =MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> putOrder(@PathVariable String uuid,
+                               @Valid @RequestBody UpdateOrderRequestDto requestDto){
+        log.info("Updatind Order by Uuid: {}", uuid);
+        return Mono.just(requestDto)
+                .map(orderDtoMapper::updateOrderCommand)
+                .flatMap(command ->
+                        updateOrderUseCase.updateByUuid(uuid, command))
+                .doOnSuccess(v ->
+                        log.info("updating successfully: {}", uuid));
     }
 }
