@@ -25,6 +25,7 @@ public class ProductDtoMapper {
                 .code(product.getCode())
                 .name(product.getName())
                 .category(product.getCategory())
+                .description(product.getDescription())
                 .Stock(product.getStock())
                 .category(product.getCategory())
                 .price(product.getPrice())

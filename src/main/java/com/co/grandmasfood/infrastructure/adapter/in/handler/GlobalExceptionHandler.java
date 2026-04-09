@@ -1,6 +1,8 @@
 package com.co.grandmasfood.infrastructure.adapter.in.handler;
 
 import com.co.grandmasfood.domain.exception.Client.*;
+import com.co.grandmasfood.domain.exception.Order.InsufficientStockException;
+import com.co.grandmasfood.domain.exception.Order.OrderNotFoundException;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -97,4 +99,36 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         // Retorna: HTTP 404 NOT FOUND
     }
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleOrderNotFound(
+            OrderNotFoundException ex) {
+
+        log.error("Order not found: {}", ex.getMessage());
+
+        ErrorResponse response = ErrorResponse.builder()
+                .code(ex.getErrorCode())
+                .timestamp(LocalDateTime.now())
+                .description(ex.getMessage())
+                .exception(null)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ErrorResponse> handleInsufficientStock(
+            InsufficientStockException ex) {
+
+        log.error("Insufficient stock: {}", ex.getMessage());
+
+        ErrorResponse response = ErrorResponse.builder()
+                .code(ex.getErrorCode())
+                .timestamp(LocalDateTime.now())
+                .description(ex.getMessage())
+                .exception(null)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
 }
