@@ -1,9 +1,11 @@
 package com.co.grandmasfood.infrastructure.adapter.in.rest.mapper;
 
 import com.co.grandmasfood.application.port.in.order.OrderCreateCommand;
+import com.co.grandmasfood.application.port.in.order.UpdateOrderCommand;
 import com.co.grandmasfood.domain.model.Order;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.OrderRequestDto;
 import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.OrderResponseDto;
+import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.UpdateOrderRequestDto;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -33,5 +35,12 @@ public class OrderDtoMapper {
                 .deliveredDate(order.getDeliveredDate())
                 .build();
 
+    }
+    public UpdateOrderCommand updateOrderCommand(UpdateOrderRequestDto requestDto){
+         return UpdateOrderCommand.builder()
+                 .productCode(requestDto.getProductCode())
+                 .quantity(requestDto.getQuantity())
+                 .additionalInfo(requestDto.getAdditionalInfo())
+                 .build();
     }
 }
