@@ -2,24 +2,21 @@ package com.co.grandmasfood.application.service;
 
 import com.co.grandmasfood.application.port.in.client.*;
 import com.co.grandmasfood.application.port.out.ClientPersistencePort;
-import com.co.grandmasfood.domain.exception.ClientAlreadyExistsException;
-import com.co.grandmasfood.domain.exception.ClientNotFoundException;
-import com.co.grandmasfood.domain.exception.NoChangesDetectedException;
-import com.co.grandmasfood.domain.exception.NoClientsExistsException;
+import com.co.grandmasfood.domain.exception.Client.ClientAlreadyExistsException;
+import com.co.grandmasfood.domain.exception.Client.ClientNotFoundException;
+import com.co.grandmasfood.domain.exception.Client.NoChangesDetectedException;
 import com.co.grandmasfood.domain.model.Client;
-import com.co.grandmasfood.infrastructure.adapter.in.rest.dto.ClientResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ClientService implements CreateClientUseCase, GetClientUseCase, UpdateClientUseCase {
+public class ClientService implements CreateClientUseCase, GetClientUseCase, UpdateClientUseCase,DeleteClientUseCase {
 
     private final ClientPersistencePort persistencePort;
 
@@ -106,6 +103,17 @@ public class ClientService implements CreateClientUseCase, GetClientUseCase, Upd
                 );
 
     }
+    @Override
+    public Mono<Void> deleteClient(String document) {
+        log.info("Deleting client by document: {}", document);
+        return persistencePort.findByDocument(document)
+                .switchIfEmpty(Mono.error(new ClientNotFoundException(document)))
+                .flatMap(Client -> persistencePort.deleteByDocument(document))
+                .doOnSuccess(v -> log.info("Client deleted Successfully: {}", document));
+
+    }
+
+
 
 
     private Client applyUpdates(Client existing, UpdateClientCommand command) {
@@ -146,4 +154,7 @@ public class ClientService implements CreateClientUseCase, GetClientUseCase, Upd
                 .updatedAt(now)
                 .build();
     }
+
+
+
 }

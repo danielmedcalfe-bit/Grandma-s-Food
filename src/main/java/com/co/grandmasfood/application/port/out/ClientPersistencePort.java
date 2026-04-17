@@ -12,4 +12,5 @@ public interface ClientPersistencePort {
     Mono<Client> save(Client client);
     Mono<Boolean> existsByDocument(String document);
     Mono<Client> findByDocument(String document);
+    Mono<Void>  deleteByDocument(String document);
 }

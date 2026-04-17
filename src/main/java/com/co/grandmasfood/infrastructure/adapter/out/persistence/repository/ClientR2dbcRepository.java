@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface ClientR2dbcRepository extends R2dbcRepository<ClientEntity, Long> {
-
     Mono<Boolean> existsByDocument(String document);
     Mono<ClientEntity> findByDocument(String document);
+    Mono<Void> deleteByDocument(String document);
 }

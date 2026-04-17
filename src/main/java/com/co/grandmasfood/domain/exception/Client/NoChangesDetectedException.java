@@ -1,4 +1,4 @@
-package com.co.grandmasfood.domain.exception;
+package com.co.grandmasfood.domain.exception.Client;
 
 public class NoChangesDetectedException extends DomainException {
 

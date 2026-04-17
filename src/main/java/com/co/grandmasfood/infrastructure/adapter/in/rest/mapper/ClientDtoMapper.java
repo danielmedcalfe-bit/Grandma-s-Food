@@ -45,7 +45,5 @@ public class ClientDtoMapper {
                 .address(client.getAddress())
                 .build();
     }
-    public DeleeClientCommand toDeleteCommand(Client client){
-        return
-    }
+
 }

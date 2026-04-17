@@ -87,6 +87,15 @@ public class ClientController {
                 );
 
     }
+    @DeleteMapping("/{document}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> deleteClient(@PathVariable String document){
+        log.info("Delete/clients/{} -Deleting Client", document);
+        return deleteClientUseCase.deleteClient(document)
+                .doOnSuccess(  V->
+                        log.info("Client deleted sucessfully: {}",document));
+
+    }
 
 
 
